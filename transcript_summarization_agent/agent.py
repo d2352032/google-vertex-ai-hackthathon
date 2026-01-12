@@ -4,7 +4,7 @@ from google.adk import Agent
 load_dotenv()
 root_agent = Agent(
     name="transcript_summarization_agent",
-    description="Summarizes chat transcripts.",
+    description="Summarize the provided jira ticket information.",
     model=os.getenv("MODEL", "gemini-2.5-flash"),
-    instruction="Summarize the provided chat transcript.",
+    instruction="Summarize the provided jira ticket information.",
 )
