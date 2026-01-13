@@ -18,7 +18,7 @@ cloud_logging_client.setup_logging()
 
 root_agent = Agent(
     name="crewai_tool_agent",
-    model=os.getenv("MODEL"),
+    model=os.getenv("MODEL", "gemini-2.5-flash"),
     description="Agent to write files.",
     instruction="Write files as requested by the user.",
     generate_content_config=types.GenerateContentConfig(

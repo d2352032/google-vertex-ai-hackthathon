@@ -11,7 +11,7 @@ vertexai_search_tool = VertexAiSearchTool(
 
 vertexai_search_agent = Agent(
     name="vertexai_search_agent",
-    model=os.getenv("MODEL"),
+    model=os.getenv("MODEL", "gemini-2.5-flash"),
     instruction="Use your search tool to look up jira tickets. save output result to state with key = 'vertexai_search_result'.",
     tools=[vertexai_search_tool]
 )

@@ -25,7 +25,7 @@ vertexai_search_tool = VertexAiSearchTool(
 
 vertexai_search_agent = Agent(
     name="vertexai_search_agent",
-    model=os.getenv("MODEL"),
+    model=os.getenv("MODEL", "gemini-2.5-flash"),
     instruction="Use your search tool to look up facts.",
     tools=[vertexai_search_tool]
 )
@@ -34,7 +34,7 @@ root_agent = Agent(
     # A unique name for the agent.
     name="root_agent",
     # The Large Language Model (LLM) that agent will use.
-    model=os.getenv("MODEL"),
+    model=os.getenv("MODEL", "gemini-2.5-flash"),
     # A short description of the agent's purpose, so other agents
     # in a multi-agent system know when to call it.
     description="Answer questions using your data store access.",

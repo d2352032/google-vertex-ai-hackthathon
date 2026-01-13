@@ -19,7 +19,7 @@ cloud_logging_client.setup_logging()
 
 root_agent = Agent(
     name="lanchgain_tool_agent",
-    model=os.getenv("MODEL"),
+    model=os.getenv("MODEL", "gemini-2.5-flash"),
     description="Answers questions using Wikipedia.",
     before_model_callback=log_query_to_model,
     after_model_callback=log_model_response,

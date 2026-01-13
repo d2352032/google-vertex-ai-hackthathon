@@ -6,7 +6,7 @@ from google.adk.agents import SequentialAgent
 from .jira_agent import vertexai_search_agent
 
 from .state_tool import save_attribute_to_state
-
+from .safe_setting import generate_content_config
 
 
 

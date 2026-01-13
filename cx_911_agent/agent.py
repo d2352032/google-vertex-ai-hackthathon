@@ -14,14 +14,16 @@ from .state_tool import save_attribute_to_state
 from .guradrail_agents import guardrail_agent
 from .summarizer_agent import summarizer_agent
 from .solution_provider_agent import solution_proivder_agent
-
+from .safe_setting import generate_content_config
 
 
 send_email_agent = Agent(
     name="send_email_agent",
     model="gemini-2.5-flash",
     instruction="""
-    Send email ONLY if {QualityGate? = PASS}. The subject and body can be reached from {output_result_candidate ?}
+    Send email ONLY if {QualityGate? = PASS}. The subject and body can be reached from {output_result_candidate ?}.
+    Signature : OneTrust – Your Trusted AI Partner
+
     """,
     tools=[send_email_tool]
 )
@@ -29,6 +31,7 @@ send_email_agent = Agent(
 response_proivder_agent=Agent(
     name="response_proivder_agent",
     model="gemini-2.5-flash",
+    generate_content_config=generate_content_config,
     instruction="""
     Get {jira_ticket_summary ?}, {solution_suggestion ?} and write an email reply to customer.
     Store the email reply to state with key = 'output_result_candidate'
