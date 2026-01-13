@@ -15,6 +15,7 @@ from .guradrail_agents import guardrail_agent
 from .summarizer_agent import summarizer_agent
 from .solution_provider_agent import solution_proivder_agent
 from .safe_setting import generate_content_config
+from .customer_360_agents import customer_360_info_agent
 
 
 send_email_agent = Agent(
@@ -46,37 +47,7 @@ response_proivder_agent=Agent(
     tools=[save_attribute_to_state]
 )
 
-customer_360_info_agent=Agent(
-    name="customer_360_info_agent",
-    model="gemini-2.5-flash",
-    instruction = """
-        Retrieve information from {new_jira_ticket ?} and use it to ground the response in the Customer 360 personal data store.
 
-        The Customer 360 data includes:
-        - Contacts = Search for Account Name
-        - Tenant Id
-        - Roles 
-        - Consent status
-        - Communication preferences
-        - Interaction and activity history
-
-        Extract all relevant personal data and store it in state using:
-        - key: "customer_360_info"
-        - value: a structured object in the following format:
-
-        {
-        "contact": "...",
-        "roles": "...",
-        "consent": "...",
-        "communication_preferences": "...",
-        "history": "..."
-        }
-
-        Only include information that is supported by the Customer 360 data.
-    """,
-
-    tools=[save_attribute_to_state]
-)
 
 
 load_dotenv()
