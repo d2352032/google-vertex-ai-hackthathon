@@ -20,10 +20,17 @@ from .safe_setting import generate_content_config
 send_email_agent = Agent(
     name="send_email_agent",
     model="gemini-2.5-flash",
-    instruction="""
-    Send email ONLY if {QualityGate? = PASS}. The subject and body can be reached from {output_result_candidate ?}.
-    Signature : OneTrust – Your Trusted AI Partner
+    instruction = """
+        Send an email only if {QualityGate?} equals "PASS".
 
+        If the condition is met:
+        - Use the email subject and body from {output_result_candidate?}.
+        - Retrieve the recipient email address from {customer_360_info?}.
+        - Append the following signature to the email body:
+
+        "OneTrust – Your Trusted AI Partner"
+
+        If {QualityGate?} is not "PASS", do not send an email and take no further action.
     """,
     tools=[send_email_tool]
 )
@@ -39,6 +46,38 @@ response_proivder_agent=Agent(
     tools=[save_attribute_to_state]
 )
 
+customer_360_info_agent=Agent(
+    name="customer_360_info_agent",
+    model="gemini-2.5-flash",
+    instruction = """
+        Retrieve information from {new_jira_ticket ?} and use it to ground the response in the Customer 360 personal data store.
+
+        The Customer 360 data includes:
+        - Contacts = Search for Account Name
+        - Tenant Id
+        - Roles 
+        - Consent status
+        - Communication preferences
+        - Interaction and activity history
+
+        Extract all relevant personal data and store it in state using:
+        - key: "customer_360_info"
+        - value: a structured object in the following format:
+
+        {
+        "contact": "...",
+        "roles": "...",
+        "consent": "...",
+        "communication_preferences": "...",
+        "history": "..."
+        }
+
+        Only include information that is supported by the Customer 360 data.
+    """,
+
+    tools=[save_attribute_to_state]
+)
+
 
 load_dotenv()
 
@@ -46,6 +85,7 @@ cx_911_sequential_agent=SequentialAgent(
     name="cx_911_sequential_agent",
     description="Summarize the provided jira ticket information and provide solution suggestion",
     sub_agents=[
+        customer_360_info_agent,
         summarizer_agent,
         solution_proivder_agent,
         response_proivder_agent,
@@ -71,16 +111,5 @@ root_agent = Agent(
     sub_agents=[
         cx_911_sequential_agent
     ]
-    
 
-    
-
-    # film_concept_team = SequentialAgent(
-    # name="film_concept_team",
-    # description="Write a film plot outline and save it as a text file.",
-    # sub_agents=[
-    #     writers_room,
-    #     file_writer
-    # ],
-    # )
 )
