@@ -26,7 +26,7 @@ send_email_agent = Agent(
 
         If the condition is met:
         - Use the email subject and body from {output_result_candidate?}.
-        - Retrieve the recipient email address from {customer_360_info?}.
+        - Retrieve the recipient email address from {customer_360_datastore?}.
         - Append the following signature to the email body:
 
         "OneTrust – Your Trusted AI Partner"

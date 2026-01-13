@@ -14,7 +14,7 @@ customer_360_info_agent=Agent(
 
         Step 2: Use "vertexai_search_agent" to fetch additional Jira tickets associated with this account.
 
-        Step 3: Using the account name and related tickets, retrieve and ground information from the Customer 360 personal data store.
+        Step 3: Using the account name and related tickets, retrieve and ground information to form the Customer 360 personal data.
 
         Customer 360 data may include:
         - Contacts (matched by account name)
@@ -25,7 +25,7 @@ customer_360_info_agent=Agent(
         - Interaction and activity history
 
         Step 4: Extract all relevant personal data and store it in state with:
-        - key: "customer_360_info"
+        - key: "customer_360_datastore"
         - value: a structured object in the following format:
 
         {
