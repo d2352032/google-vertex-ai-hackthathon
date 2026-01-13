@@ -4,7 +4,7 @@ from .state_tool import save_attribute_to_state
 
 summarizer_agent=Agent(
     name="summarizer_agent",
-    description="Get the {new_jira_ticket}, summarize the jira ticket information.",
+    description="Get the {new_jira_ticket ?}, summarize the jira ticket information.",
     model=os.getenv("MODEL", "gemini-2.5-flash"),
     instruction="""
     You are an agent to summarize the provided jira ticket information. 

@@ -5,9 +5,10 @@ from dotenv import load_dotenv
 
 from google.adk import Agent
 from google.adk.tools import AgentTool
+from google.adk.agents import SequentialAgent
 
 from .tools import get_date
-from .send_email_tool import send_email
+from .send_email_tool import send_email_tool
 from .state_tool import save_attribute_to_state
 
 from .guradrail_agents import guardrail_agent
@@ -20,42 +21,54 @@ send_email_agent = Agent(
     name="send_email_agent",
     model="gemini-2.5-flash",
     instruction="""
-    Send email ONLY if approved.
+    Send email ONLY if {QualityGate? = PASS}. The subject and body can be reached from {output_result_candidate ?}
     """,
-    tools=[send_email]
+    tools=[send_email_tool]
 )
 
+response_proivder_agent=Agent(
+    name="response_proivder_agent",
+    model="gemini-2.5-flash",
+    instruction="""
+    Get {jira_ticket_summary ?}, {solution_suggestion ?} and write an email reply to customer.
+    Store the email reply to state with key = 'output_result_candidate'
+    """,
+    tools=[save_attribute_to_state]
+)
+
+
 load_dotenv()
+
+cx_911_sequential_agent=SequentialAgent(
+    name="cx_911_sequential_agent",
+    description="Summarize the provided jira ticket information and provide solution suggestion",
+    sub_agents=[
+        summarizer_agent,
+        solution_proivder_agent,
+        response_proivder_agent,
+        guardrail_agent,
+        send_email_agent,
+    
+    ],
+)
+
+
 root_agent = Agent(
     name="cx_911_agent",
     description="Summarize the provided jira ticket information.",
     model=os.getenv("MODEL", "gemini-2.5-flash"),
     instruction="""
     You are an agent to try to help customer resolve production support issues.
+    Store the user input into state with key = 'new_jira_ticket' and use cx_911_sequential_agent subagent to resolve it.
 
-    1. Use 'summarizer_agent' to summarize the provided jira ticket information. 
-    2. Use 'solution_provider_agent' to provide suggested solution.
-
-    3. Save the suggestions to state as key = Jira-ticket id, value = solution suggestion.
-
-    4. If customer asks questions about Jira tickets for example number of tickets, use 'jira_agent' to check them.
-
-    5. Write a email reply to the customer, including summary, issue suggestion. store the reply to state 'output_result_candidate'
-    
-    6. Use guardrail_agent to calculate guardrail scores for the 'output_result_candidate' reply. The guardrail_agent will store result in state with key = 'QulityGate'
-    
-    7. Check state with 'QulityGate' key. If passed, then use 'send_email_agent' to send the 'output_result_candidate' to 'farrah.tsai@onetrust.com' and 'thsinfang@gmail.com'
     """,
    
     # instruction="Summarize the provided jira ticket information. Then give an SLA as 3 days from now using 'get_date' tool",
     tools=[save_attribute_to_state],
-
     sub_agents=[
-        summarizer_agent,
-        solution_proivder_agent,
-        send_email_agent,
-        guardrail_agent,
+        cx_911_sequential_agent
     ]
+    
 
     
 

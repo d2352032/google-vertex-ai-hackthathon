@@ -1,8 +1,7 @@
-# import smtplib
 import smtplib
 from email.message import EmailMessage
 
-def send_email(to: str, subject: str, body: str):
+def send_email_tool(to: str, subject: str, body: str):
 
 #     """
 #     Sends an email using Mailtrap SMTP.
