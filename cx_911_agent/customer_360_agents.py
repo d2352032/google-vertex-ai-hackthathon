@@ -27,7 +27,7 @@ customer_360_info_agent=Agent(
         | Account Name                 | Customer legal or business name |
         | Engagement Type              | e.g., POC, Evaluation, Production |
         | Customer Identified Issue    | Yes / No |
-        | Customer Temperature         | Very Good / Good / Normal / Bad |
+        | Customer Temperature         | Hot / Warm / Cold |
         | Reported By Region           | Geographic region |
         | Reported By Team             | Internal reporting team |
 

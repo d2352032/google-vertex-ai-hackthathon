@@ -30,11 +30,7 @@ send_email_agent = Agent(
             1. Use the email subject and email body from {output_result_candidate?}.
             2. Set the email recipient to:
                 receiver = "customer@example.com"
-            3. Append the following signature to the end of the email body:
-
-            "OneTrust – Your Trusted AI Partner"
-
-            4. Send the email.
+            3. Send the email.
 
         - If {QualityGate?} != "PASS":
             - Do not send an email.
@@ -47,10 +43,23 @@ response_proivder_agent=Agent(
     name="response_proivder_agent",
     model="gemini-2.5-flash",
     generate_content_config=generate_content_config,
-    instruction="""
-    Get {jira_ticket_summary ?}, {solution_suggestion ?} and write an email reply to customer.
-    Store the email reply to state with key = 'output_result_candidate'
+    instruction = """
+    Using the available inputs:
+    - {jira_ticket_summary ?}
+    - {solution_suggestion ?}
+
+    Draft a professional email reply to the customer that addresses the ticket and incorporates the solution where appropriate.
+
+    Save the generated email reply to the state using the key:
+    - output_result_candidate
+
+    Constraints:
+    - The email must end with the following signature (exact text):
+
+    "Sincerely,
+        OneTrust – Your Trusted AI Partner"
     """,
+
     tools=[save_attribute_to_state]
 )
 
