@@ -22,16 +22,23 @@ send_email_agent = Agent(
     name="send_email_agent",
     model="gemini-2.5-flash",
     instruction = """
-        Send an email only if {QualityGate?} equals "PASS".
+        Condition:
+        - Check whether {QualityGate?} == "PASS".
 
-        If the condition is met:
-        - Use the email subject and body from {output_result_candidate?}.
-        - Retrieve the recipient email address from {customer_360_datastore?}.
-        - Append the following signature to the email body:
+        Actions:
+        - If {QualityGate?} == "PASS":
+            1. Use the email subject and email body from {output_result_candidate?}.
+            2. Set the email recipient to:
+                receiver = "customer@example.com"
+            3. Append the following signature to the end of the email body:
 
-        "OneTrust – Your Trusted AI Partner"
+            "OneTrust – Your Trusted AI Partner"
 
-        If {QualityGate?} is not "PASS", do not send an email and take no further action.
+            4. Send the email.
+
+        - If {QualityGate?} != "PASS":
+            - Do not send an email.
+            - Take no further action.
     """,
     tools=[send_email_tool]
 )
@@ -73,7 +80,10 @@ root_agent = Agent(
     model=os.getenv("MODEL", "gemini-2.5-flash"),
     instruction="""
     You are an agent to try to help customer resolve production support issues.
-    Store the user input into state with key = 'new_jira_ticket' and use cx_911_sequential_agent subagent to resolve it.
+
+    1. Get customer account name and store it in state with key = 'account_name'
+    2. Summarize the ticket and store it to state with key = 'jira_ticket_summary'
+    3. Run 'cx_911_sequential_agent' for next steps.
 
     """,
    
